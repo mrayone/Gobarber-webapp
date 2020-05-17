@@ -5,7 +5,7 @@ import { Container, Content, Background } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-const Signin: React.FC = () => (
+const SignIn: React.FC = () => (
   <Container>
     <Content>
       <img src={logoImg} alt="GoBarber" />
@@ -28,4 +28,4 @@ const Signin: React.FC = () => (
   </Container>
 );
 
-export default Signin;
+export default SignIn;
