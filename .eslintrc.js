@@ -31,7 +31,9 @@ module.exports = {
   "rules": {
     "prettier/prettier": "error",
     "react-hooks/rules-of-hooks": "error",
+    "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
+    "react/jsx-props-no-spreading": "off",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
