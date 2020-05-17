@@ -16,10 +16,20 @@ const SignUp: React.FC = () => {
       <Background />
       <Content>
         <img src={logoImg} alt="GoBarber" />
-        <Form onSubmit={handleSubmit}>
+        <Form autoComplete="off" onSubmit={handleSubmit}>
           <h1>Faça seu cadastro</h1>
-          <Input name="nome" icon={FiUser} placeholder="Nome" />
-          <Input name="email" icon={FiMail} placeholder="E-mail" />
+          <Input
+            name="nome"
+            autoComplete="false"
+            icon={FiUser}
+            placeholder="Nome"
+          />
+          <Input
+            name="email"
+            autoComplete="false"
+            icon={FiMail}
+            placeholder="E-mail"
+          />
           <Input
             name="senha"
             icon={FiLock}
