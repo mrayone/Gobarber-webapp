@@ -33,6 +33,7 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
+    "eslint-disable-next-line": "off",
     "react/jsx-props-no-spreading": "off",
     "react-hooks/exhaustive-deps": "warn",
     "no-unused-expressions": "off",
