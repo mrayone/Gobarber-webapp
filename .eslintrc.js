@@ -29,7 +29,12 @@ module.exports = {
     'prettier'
   ],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "react-hooks/rules-of-hooks": "error",
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
