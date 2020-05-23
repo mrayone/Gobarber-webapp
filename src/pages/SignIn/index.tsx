@@ -34,7 +34,11 @@ const SignIn: React.FC = () => {
         const { email, password } = data;
         await signIn({ email, password });
       } catch (error) {
-        formRef.current?.setErrors(getValidationErrors(error));
+        if (error instanceof Yup.ValidationError) {
+          formRef.current?.setErrors(getValidationErrors(error));
+        }
+
+        // Toast message.
       }
     },
     [signIn],
