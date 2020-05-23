@@ -63,9 +63,7 @@ function useAuth(): AuthContextState {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error(
-      'You can use useAuth hook only within AuthContext.Provider',
-    );
+    throw new Error('You can use useAuth hook only within AuthProvider');
   }
 
   return context;

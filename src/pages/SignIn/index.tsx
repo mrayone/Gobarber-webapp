@@ -3,7 +3,8 @@ import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import { useAuth, UserCredentials } from '../../hooks/AuthContext';
+import { useAuth, UserCredentials } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import logoImg from '../../assets/logo.svg';
@@ -15,6 +16,7 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { signIn } = useAuth();
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: UserCredentials): Promise<void> => {
@@ -38,10 +40,10 @@ const SignIn: React.FC = () => {
           formRef.current?.setErrors(getValidationErrors(error));
         }
 
-        // Toast message.
+        addToast();
       }
     },
-    [signIn],
+    [signIn, addToast],
   );
 
   return (
