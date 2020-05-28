@@ -49,7 +49,10 @@ const SignUp: React.FC = () => {
           type: 'success',
         });
       } catch (error) {
-        formRef.current?.setErrors(getValidationErrors(error));
+        if (error instanceof Yup.ValidationError) {
+          formRef.current?.setErrors(getValidationErrors(error));
+          return;
+        }
         addToast({
           title: 'Erro no cadastro',
           description: 'Ocorreu um erro ao fazer o cadastro, tente novamente',
