@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import DayPicker, { DayModifiers } from 'react-day-picker';
-import { isToday, format, parseISO } from 'date-fns';
+import { isToday, format, parseISO, isAfter } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import 'react-day-picker/lib/style.css';
 import { FiPower, FiClock } from 'react-icons/fi';
@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
   >([]);
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
-    if (modifiers.available) {
+    if (modifiers.available && !modifiers.disabled) {
       setSelectedDate(day);
     }
   }, []);
@@ -124,6 +124,12 @@ const Dashboard: React.FC = () => {
     });
   }, [appoitments]);
 
+  const nextAppoitment = useMemo(() => {
+    return appoitments.find((appointment) => {
+      return isAfter(parseISO(appointment.date), new Date());
+    });
+  }, [appoitments]);
+
   return (
     <Container>
       <Header>
@@ -150,23 +156,28 @@ const Dashboard: React.FC = () => {
             <span>{selectedDateAsText}</span>
             <span>{selectedWeekDay}</span>
           </p>
-          <NextAppointment>
-            <strong>Atendimento a seguir</strong>
+          {isToday(selectedDate) && nextAppoitment && (
+            <NextAppointment>
+              <strong>Atendimento a seguir</strong>
 
-            <div>
-              <img
-                src="https://app-mrayone-go-barber.s3.amazonaws.com/6f53d1c86465226b6936-17658240.jpg"
-                alt="Atendimento"
-              />
-              <strong>Maycon Rayone</strong>
-              <span>
-                <FiClock /> 08:00
-              </span>
-            </div>
-          </NextAppointment>
+              <div>
+                <img
+                  src={nextAppoitment.user.avatar_url}
+                  alt={nextAppoitment.user.name}
+                />
+                <strong>{nextAppoitment.user.name}</strong>
+                <span>
+                  <FiClock /> {nextAppoitment.hourFormatted}
+                </span>
+              </div>
+            </NextAppointment>
+          )}
 
           <Section>
             <strong>Manhã</strong>
+            {moorningAppoitments.length === 0 && (
+              <p>Nenhum agendamento neste período</p>
+            )}
             {moorningAppoitments.map((appointment) => {
               return (
                 <Appointment key={appointment.id}>
@@ -187,6 +198,9 @@ const Dashboard: React.FC = () => {
 
           <Section>
             <strong>Tarde</strong>
+            {afternoonAppoitments.length === 0 && (
+              <p>Nenhum agendamento neste período</p>
+            )}
             {afternoonAppoitments.map((appointment) => {
               return (
                 <Appointment key={appointment.id}>

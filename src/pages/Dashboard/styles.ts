@@ -8,6 +8,7 @@ export const Header = styled.header`
   background: #28262e;
   position: sticky;
   top: 0;
+  z-index: 1000;
 `;
 
 export const HeaderContent = styled.div`
@@ -159,6 +160,10 @@ export const Section = styled.div`
     border-bottom: 1px solid #3e3b47;
     padding-bottom: 16px;
     margin-bottom: 16px;
+  }
+
+  > p {
+    color: #999591;
   }
 `;
 
