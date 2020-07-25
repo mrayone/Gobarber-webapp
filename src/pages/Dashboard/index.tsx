@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import DayPicker, { DayModifiers } from 'react-day-picker';
+import { isToday, format, parseISO } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import 'react-day-picker/lib/style.css';
 import { FiPower, FiClock } from 'react-icons/fi';
 import logo from '../../assets/logo.svg';
@@ -22,10 +24,22 @@ interface MonthAvailabilityItem {
   day: number;
   available: boolean;
 }
+
+interface Appointment {
+  id: string;
+  date: string;
+  hourFormatted: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  };
+}
+
 const Dashboard: React.FC = () => {
   const { signOut, user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [appoitments, setAppoitments] = useState<Appointment[]>([]);
   const [monthAvailability, setMonthAvailability] = useState<
     MonthAvailabilityItem[]
   >([]);
@@ -53,6 +67,27 @@ const Dashboard: React.FC = () => {
       });
   }, [user, currentMonth]);
 
+  useEffect(() => {
+    api
+      .get<Appointment[]>('appointments/me', {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then((response) => {
+        const appoitmentFormatted = response.data.map((appointment) => {
+          return {
+            ...appointment,
+            hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+          };
+        });
+
+        setAppoitments(appoitmentFormatted);
+      });
+  }, [selectedDate]);
+
   const disabledDays = useMemo(() => {
     const dates = monthAvailability
       .filter((monthDay) => !monthDay.available)
@@ -64,6 +99,30 @@ const Dashboard: React.FC = () => {
 
     return dates;
   }, [currentMonth, monthAvailability]);
+
+  const selectedDateAsText = useMemo(() => {
+    return format(selectedDate, "'Dia' dd 'de' MMMM", {
+      locale: ptBR,
+    });
+  }, [selectedDate]);
+
+  const selectedWeekDay = useMemo(() => {
+    return format(selectedDate, 'cccc', {
+      locale: ptBR,
+    });
+  }, [selectedDate]);
+
+  const moorningAppoitments = useMemo(() => {
+    return appoitments.filter((appointment) => {
+      return parseISO(appointment.date).getHours() < 12;
+    });
+  }, [appoitments]);
+
+  const afternoonAppoitments = useMemo(() => {
+    return appoitments.filter((appointment) => {
+      return parseISO(appointment.date).getHours() >= 12;
+    });
+  }, [appoitments]);
 
   return (
     <Container>
@@ -87,9 +146,9 @@ const Dashboard: React.FC = () => {
         <Schedule>
           <h1>Horários agendados</h1>
           <p>
-            <span>Hoje</span>
-            <span>Dia 06</span>
-            <span>Segunda-feira</span>
+            {isToday(selectedDate) && <span>Hoje</span>}
+            <span>{selectedDateAsText}</span>
+            <span>{selectedWeekDay}</span>
           </p>
           <NextAppointment>
             <strong>Atendimento a seguir</strong>
@@ -108,48 +167,42 @@ const Dashboard: React.FC = () => {
 
           <Section>
             <strong>Manhã</strong>
-            <Appointment>
-              <span>
-                <FiClock /> 08:00
-              </span>
-              <div>
-                <img
-                  src="https://app-mrayone-go-barber.s3.amazonaws.com/6f53d1c86465226b6936-17658240.jpg"
-                  alt="Atendimento"
-                />
-                <strong>Maycon Rayone</strong>
-              </div>
-            </Appointment>
+            {moorningAppoitments.map((appointment) => {
+              return (
+                <Appointment key={appointment.id}>
+                  <span>
+                    <FiClock /> {appointment.hourFormatted}
+                  </span>
+                  <div>
+                    <img
+                      src={appointment.user.avatar_url}
+                      alt={appointment.user.name}
+                    />
+                    <strong>{appointment.user.name}</strong>
+                  </div>
+                </Appointment>
+              );
+            })}
           </Section>
 
           <Section>
             <strong>Tarde</strong>
-
-            <Appointment>
-              <span>
-                <FiClock /> 12:00
-              </span>
-              <div>
-                <img
-                  src="https://app-mrayone-go-barber.s3.amazonaws.com/6f53d1c86465226b6936-17658240.jpg"
-                  alt="Atendimento"
-                />
-                <strong>Maycon Rayone</strong>
-              </div>
-            </Appointment>
-
-            <Appointment>
-              <span>
-                <FiClock /> 12:00
-              </span>
-              <div>
-                <img
-                  src="https://app-mrayone-go-barber.s3.amazonaws.com/6f53d1c86465226b6936-17658240.jpg"
-                  alt="Atendimento"
-                />
-                <strong>Maycon Rayone</strong>
-              </div>
-            </Appointment>
+            {afternoonAppoitments.map((appointment) => {
+              return (
+                <Appointment key={appointment.id}>
+                  <span>
+                    <FiClock /> {appointment.hourFormatted}
+                  </span>
+                  <div>
+                    <img
+                      src={appointment.user.avatar_url}
+                      alt={appointment.user.name}
+                    />
+                    <strong>{appointment.user.name}</strong>
+                  </div>
+                </Appointment>
+              );
+            })}
           </Section>
         </Schedule>
         <Calendar>

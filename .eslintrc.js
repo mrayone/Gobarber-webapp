@@ -38,6 +38,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'no-unused-expressions': 'off',
     '@typescript-eslint/camelcase': 'off',
+    'import/no-duplicates': 'off',
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {
