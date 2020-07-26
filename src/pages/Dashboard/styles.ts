@@ -9,6 +9,15 @@ export const Header = styled.header`
   position: sticky;
   top: 0;
   z-index: 1000;
+
+  a {
+    text-decoration: none;
+    color: #ff9000;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 `;
 
 export const HeaderContent = styled.div`
