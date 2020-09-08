@@ -84,10 +84,6 @@ const AuthProvider: React.FC = ({ children }) => {
 function useAuth(): AuthContextState {
   const context = useContext(AuthContext);
 
-  if (!context) {
-    throw new Error('You can use useAuth hook only within AuthProvider');
-  }
-
   return context;
 }
 
